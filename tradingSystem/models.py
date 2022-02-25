@@ -6,7 +6,7 @@ from django.db import models
 class UserTable(models.Model):
     # 用户信息表
     # 用户ID，
-    user_id = models.CharField(max_length=12)
+    user_id = models.IntegerField(primary_key=True)
     # 身份证号码
     id_no = models.CharField(max_length=18)
     # 用户名，用于显示和评论
@@ -16,7 +16,7 @@ class UserTable(models.Model):
     # 用户性别
     user_sex = models.CharField(max_length=5)
     # 用户电话号码，用于注册，开户，联系，PK
-    phone_number = models.CharField(max_length=45, primary_key=True)
+    phone_number = models.CharField(max_length=45,unique=True)
     # 用户邮箱
     user_email = models.EmailField()
     # 用户头像路径
