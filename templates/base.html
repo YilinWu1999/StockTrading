@@ -1,4 +1,3 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -145,6 +144,14 @@
                     <i class="fas fa-th-large"></i>
                 </a>
             </li>
+            {% if request.session.uid %}
+            <li class="nav-item">
+                <a class="nav-link" data-widget="fullscreen" href="{% url 'user_out' %}" role="button">
+                    <button type="button" class="btn btn-block btn-default btn-sm">退出登陆</button>
+                </a>
+            </li>
+            {% endif %}
+
         </ul>
     </nav>
     <!-- /.navbar -->
@@ -152,7 +159,7 @@
     <!-- Main Sidebar Container 侧面导航栏-->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
-        <a href="index3.html" class="brand-link">
+        <a href="{% url 'index' %}" class="brand-link">
             <img src="{% static 'img/logo.jpg' %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
                  style="opacity: .8">
             <span class="brand-text font-weight-light">首页</span>
@@ -166,7 +173,11 @@
                     <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
                 </div>
                 <div class="info">
-                    <a href="#" class="d-block">Alexander Pierce</a>
+                    {% if request.session.username %}
+                        <a href="#" class="d-block">{{ request.session.username }}</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="d-block">点击此处登陆</a>
+                    {% endif %}
                 </div>
             </div>
 
@@ -186,7 +197,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="" class="nav-link">
+                        <a href="{% url 'user_detail' %}" class="nav-link">
                             <i class="fa fa-user-circle"></i>
                             <p>
                                 个人信息管理
@@ -230,103 +241,103 @@
     <!-- /.Main Sidebar Container -->
 
     {% block content %}
-    <!-- Content Wrapper. Contains page content 核心内容-->
-    <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <div class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-1">
-                </div><!-- /.row -->
-            </div><!-- /.container-fluid -->
+        <!-- Content Wrapper. Contains page content 核心内容-->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-1">
+                    </div><!-- /.row -->
+                </div><!-- /.container-fluid -->
+            </div>
+            <!-- /.content-header -->
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    <!-- Main row -->
+                    <div class="row">
+                        <!-- Left col -->
+                        <section class="col-lg-7 connectedSortable">
+                            <div class="card card-info card-outline">
+                                <div class="card-header with-border">
+                                    <h3 class="card-title">热门牛股</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table no-margin">
+                                            <thead>
+                                            <tr>
+                                                <th>股票代码</th>
+                                                <th>全称</th>
+                                                <th>状态</th>
+                                                <th>涨幅</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for stock in top10stock %}
+                                                <tr>
+                                                    <td>
+                                                        <a href=""></a>
+                                                    </td>
+                                                    <td></td>
+                                                    <td><span class="label label-danger">上涨</span></td>
+                                                    <td></td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="card-footer clearfix">
+                                    <a href=""
+                                       class="btn btn-sm btn-info btn-flat pull-left">购入股票</a>
+                                    <a href=""
+                                       class="btn btn-sm btn-default btn-flat pull-right">查看全部</a>
+                                </div>
+                            </div>
+
+                        </section>
+                        <!-- /.Left col -->
+                        <!-- right col (We are only adding the ID to make the widgets sortable)-->
+                        <section class="col-lg-5 connectedSortable">
+                            <div class="card card-info card-outline">
+                                <div class="card-header with-border">
+                                    <h3 class="card-title">重大新闻</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table no-margin">
+                                            <thead>
+                                            </thead>
+                                            <tbody>
+                                            {% for news in news_list %}
+                                                <tr>
+                                                    <td>
+                                                        <a href=""></a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="card-footer clearfix">
+                                    <a href=""
+                                       class="btn btn-sm btn-info btn-flat pull-right" id="change_btn"><i
+                                            class="fa fa-refresh fa-spin"></i>
+                                        换一波瞅瞅</a>
+                                </div>
+                            </div>
+                        </section>
+                        <!-- right col -->
+                    </div>
+                    <!-- /.row (main row) -->
+                </div><!-- /.container-fluid -->
+            </section>
+            <!-- /.content -->
         </div>
-        <!-- /.content-header -->
-
-        <!-- Main content -->
-        <section class="content">
-            <div class="container-fluid">
-                <!-- Main row -->
-                <div class="row">
-                    <!-- Left col -->
-                    <section class="col-lg-7 connectedSortable">
-                        <div class="card card-info card-outline">
-                            <div class="card-header with-border">
-                                <h3 class="card-title">热门牛股</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table no-margin">
-                                        <thead>
-                                        <tr>
-                                            <th>股票代码</th>
-                                            <th>全称</th>
-                                            <th>状态</th>
-                                            <th>涨幅</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for stock in top10stock %}
-                                            <tr>
-                                                <td>
-                                                    <a href=""></a>
-                                                </td>
-                                                <td></td>
-                                                <td><span class="label label-danger">上涨</span></td>
-                                                <td></td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="card-footer clearfix">
-                                <a href=""
-                                   class="btn btn-sm btn-info btn-flat pull-left">购入股票</a>
-                                <a href=""
-                                   class="btn btn-sm btn-default btn-flat pull-right">查看全部</a>
-                            </div>
-                        </div>
-
-                    </section>
-                    <!-- /.Left col -->
-                    <!-- right col (We are only adding the ID to make the widgets sortable)-->
-                    <section class="col-lg-5 connectedSortable">
-                        <div class="card card-info card-outline">
-                            <div class="card-header with-border">
-                                <h3 class="card-title">重大新闻</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table no-margin">
-                                        <thead>
-                                        </thead>
-                                        <tbody>
-                                        {% for news in news_list %}
-                                            <tr>
-                                                <td>
-                                                    <a href=""></a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="card-footer clearfix">
-                                <a href=""
-                                   class="btn btn-sm btn-info btn-flat pull-right" id="change_btn"><i
-                                        class="fa fa-refresh fa-spin"></i>
-                                    换一波瞅瞅</a>
-                            </div>
-                        </div>
-                    </section>
-                    <!-- right col -->
-                </div>
-                <!-- /.row (main row) -->
-            </div><!-- /.container-fluid -->
-        </section>
-        <!-- /.content -->
-    </div>
-    <!-- /.content-wrapper -->
+        <!-- /.content-wrapper -->
     {% endblock %}
 
     <!-- 版权 -->

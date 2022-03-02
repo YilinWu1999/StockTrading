@@ -27,7 +27,7 @@ class UserTable(models.Model):
     freeze = models.BooleanField(default=False)
     # 是否成功开户
     account_opened = models.BooleanField(default=True)
-    # last_login
+    # 最后登陆时间
     last_login = models.CharField(max_length=45,null=True)
 
     def __str__(self):
