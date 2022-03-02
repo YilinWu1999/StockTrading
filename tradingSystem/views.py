@@ -21,7 +21,7 @@ def user_login(request):
         try:
             user = UserTable.objects.get(phone_number=phone_number)
         except Exception as e:
-            print('--login user error %s'%(e))
+            print('--login user error %s' % (e))
             message = '用户名或者密码错误'
             return render(request, 'login.html', locals())
         if user.password != password:
@@ -39,6 +39,7 @@ def user_out(request):
     elif request.method == 'POST':
         return redirect('index')
 
+
 def user_register(request):
     if request.method == 'GET':
         return render(request, 'register.html')
@@ -50,7 +51,7 @@ def user_register(request):
         password = request.POST['password']
         ensure_password = request.POST['ensure_password']
         message = ""
-        old_users = UserTable.objects.filter(Q(phone_number=phone_number)|Q(id_no=id_no)|Q(user_email=user_email))
+        old_users = UserTable.objects.filter(Q(phone_number=phone_number) | Q(id_no=id_no) | Q(user_email=user_email))
         if password != ensure_password:
             message = "输入的两次密码不一致！"
             return render(request, 'register.html', locals())
@@ -73,14 +74,15 @@ def user_register(request):
             print(Exception)
             message = "注册失败，请检查或稍后再试！"
             return render(request, 'register.html', locals())
-        return render(request,'login.html')
+        return render(request, 'login.html')
+
 
 def user_detail(request):
     if request.method == 'GET':
         uid = request.session.get('uid')
         if uid:
             user = UserTable.objects.get(id=uid)
-            return render(request,'user_detail.html',locals())
+            return render(request, 'user_detail.html', locals())
         else:
             return render(request, 'login.html')
     elif request.method == 'POST':
@@ -92,41 +94,36 @@ def user_detail(request):
         ensure_password = request.POST['ensure_password']
         account_type = request.POST['account_type']
         account_num = request.POST['account_num']
-        message = ""
-        old_users = UserTable.objects.filter(Q(phone_number=phone_number)|Q(id_no=id_no)|Q(user_email=user_email))
-        if password != ensure_password:
-            message = "输入的两次密码不一致！"
-            return render(request, 'register.html', locals())
-        elif old_users:
-            message = "手机号、邮箱或者身份证号已被注册"
-            return render(request, 'register.html', locals())
-        try:
-            user = UserTable.objects.create(
-                user_name=user_name,
-                user_email=user_email,
-                id_no=id_no,
-                password=password,
-                phone_number=phone_number,
-                account_balance=0,
-            )
-            user.save()
-            print("success register user")
-            print(user)
-        except Exception:
-            print(Exception)
-            message = "注册失败，请检查或稍后再试！"
-            return render(request, 'register.html', locals())
-        return render(request, 'user_detail.html')
+        if ensure_password != password:
+            message = "确认密码不符"
+        else:
+            try:
+                user = UserTable.objects.get(phone_number=phone_number)
+                user.phone_number = phone_number
+                user.user_name = user_name
+                user.user_email = user_email
+                user.password = password
+                user.account_type = account_type
+                user.account_num = account_num
+                user.id_no = id_no
+                user.save()
+            except Exception:
+                message = "修改信息失败，请仔细检查，或稍后重试"
+        context = {
+            'message': message,
+            'user': user
+        }
+        return redirect('user_detail', context)
+
 
 def index(request):
     if request.method == 'GET':
-        #处理登陆状态
+        # 处理登陆状态
         uid = request.session.get('uid')
         if uid:
             user = UserTable.objects.get(id=uid)
             user_name = user.user_name
             request.session['username'] = user_name
-        return render(request,'index.html')
+        return render(request, 'index.html')
     elif request.method == 'POST':
         return render(request, 'index.html')
-
