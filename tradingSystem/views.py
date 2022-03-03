@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from .models import *
+import tushare as ts
 
 
 # Create your views here.
@@ -28,13 +29,13 @@ def user_login(request):
             message = '用户名或者密码错误'
             return render(request, 'login.html', locals())
         request.session['uid'] = user.id
+        request.session['photo_url'] = str(user.photo_url)
         return redirect('index')
 
 
 def user_out(request):
     if request.method == 'GET':
-        del request.session['uid']
-        del request.session['username']
+        request.session.flush()
         return redirect('index')
     elif request.method == 'POST':
         return redirect('index')
@@ -82,6 +83,8 @@ def user_detail(request):
         uid = request.session.get('uid')
         if uid:
             user = UserTable.objects.get(id=uid)
+            message = request.session.get('message')
+            print(message)
             return render(request, 'user_detail.html', locals())
         else:
             return render(request, 'login.html')
@@ -94,6 +97,8 @@ def user_detail(request):
         ensure_password = request.POST['ensure_password']
         account_type = request.POST['account_type']
         account_num = request.POST['account_num']
+        photo_url = request.FILES.get('')
+        message = ''
         if ensure_password != password:
             message = "确认密码不符"
         else:
@@ -109,11 +114,9 @@ def user_detail(request):
                 user.save()
             except Exception:
                 message = "修改信息失败，请仔细检查，或稍后重试"
-        context = {
-            'message': message,
-            'user': user
-        }
-        return redirect('user_detail', context)
+        request.session['username'] = user_name
+        request.session['message'] = message
+        return redirect('user_detail')
 
 
 def index(request):
@@ -124,6 +127,18 @@ def index(request):
             user = UserTable.objects.get(id=uid)
             user_name = user.user_name
             request.session['username'] = user_name
-        return render(request, 'index.html')
+
+        #获取股票数据
+        stocks = []
+        ts.set_token('e4ef519ae1e2dcc00beb8d11707219e6274cf24c77668e95ffd63774')
+        pro = ts.pro_api()
+        # 查询当前所有正常上市交易的股票列表
+        data = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
+        for i in range(0,10):
+            stock = {}
+            stock['symbol'] = data.loc[i,'symbol']
+            stock['name'] = data.loc[i,'name']
+            stocks.append(stock)
+        return render(request, 'index.html', locals())
     elif request.method == 'POST':
         return render(request, 'index.html')

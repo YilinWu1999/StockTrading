@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from tradingSystem import views
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', views.user_login, name='login'),
@@ -23,4 +25,4 @@ urlpatterns = [
     path('index/', views.index, name='index'),
     path('user_detail/',views.user_detail, name='user_detail'),
     path('user_out/',views.user_out, name='user_out'),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # 加入这个才能显示media文件

@@ -145,11 +145,11 @@
                 </a>
             </li>
             {% if request.session.uid %}
-            <li class="nav-item">
-                <a class="nav-link" data-widget="fullscreen" href="{% url 'user_out' %}" role="button">
-                    <button type="button" class="btn btn-block btn-default btn-sm">退出登陆</button>
-                </a>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="fullscreen" href="{% url 'user_out' %}" role="button">
+                        <button type="button" class="btn btn-block btn-default btn-sm">退出登陆</button>
+                    </a>
+                </li>
             {% endif %}
 
         </ul>
@@ -170,7 +170,11 @@
             <!-- Sidebar user panel (optional) -->
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                 <div class="image">
-                    <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                    {% if request.session.photo_url %}
+                        <img src="{{ request.session.photo_url }}" class="img-circle elevation-2" alt="{{ request.session.username }}">
+                    {% else %}
+                        <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                    {% endif %}
                 </div>
                 <div class="info">
                     {% if request.session.username %}
