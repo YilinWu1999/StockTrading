@@ -31,8 +31,6 @@ def user_login(request):
             return render(request, 'login.html', locals())
         request.session['uid'] = user.id
         request.session['photo_url'] = user.photo_url.url
-        # request.session['photo_url'] = str(user.photo_url)
-        # print('111111111111'+str(user.photo_url))
         return redirect('index')
 
 
@@ -159,3 +157,41 @@ def index(request):
         return render(request, 'index.html', locals())
     elif request.method == 'POST':
         return render(request, 'index.html')
+
+
+def stock_update(request):
+    if request.method == 'GET':
+        # 获取/更新当前上市交易的股票信息
+        ts.set_token('e4ef519ae1e2dcc00beb8d11707219e6274cf24c77668e95ffd63774')
+        pro = ts.pro_api()
+        stocks = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,market,industry,list_date')
+        for i in range(0, len(stocks)):
+            stock_ts = stocks.loc[i, 'ts_code']
+            stock_symbol = stocks.loc[i, 'symbol']
+            stock_name = stocks.loc[i, 'name']
+            stock_industry = stocks.loc[i, 'industry']
+            stock_market = stocks.loc[i, 'market']
+            stock_list_date = stocks.loc[i, 'list_date']
+
+            try:
+                stock = StockTable.objects.filter(stock_ts=stock_ts)
+                if stock:
+                    stock.stock_ts = stock_ts
+                    stock.stock_symbol = stock_symbol
+                    stock.stock_name = stock_name
+                    stock.stock_industry = stock_industry
+                    stock.stock_market = stock_market
+                    stock.stock_list_date = stock_list_date
+                else:
+                    stock = StockTable.objects.create(
+                        stock_ts=stock_ts,
+                        stock_symbol=stock_symbol,
+                        stock_name=stock_name,
+                        stock_industry=stock_industry,
+                        stock_market=stock_market,
+                        stock_list_date=stock_list_date,
+                    )
+                stock.save()
+            except Exception:
+                print(Exception)
+        return render(request,'index.html')
