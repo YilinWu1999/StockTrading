@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 from .models import *
 import tushare as ts
+import time
 
 
 # Create your views here.
@@ -29,7 +30,9 @@ def user_login(request):
             message = '用户名或者密码错误'
             return render(request, 'login.html', locals())
         request.session['uid'] = user.id
-        request.session['photo_url'] = str(user.photo_url)
+        request.session['photo_url'] = user.photo_url.url
+        # request.session['photo_url'] = str(user.photo_url)
+        # print('111111111111'+str(user.photo_url))
         return redirect('index')
 
 
@@ -89,6 +92,7 @@ def user_detail(request):
         else:
             return render(request, 'login.html')
     elif request.method == 'POST':
+        message = ''
         user_name = request.POST['user_name']
         phone_number = request.POST['phone_number']
         id_no = request.POST['id_no']
@@ -97,11 +101,17 @@ def user_detail(request):
         ensure_password = request.POST['ensure_password']
         account_type = request.POST['account_type']
         account_num = request.POST['account_num']
-        photo_url = request.FILES.get('')
-        message = ''
+        file_obj = request.FILES.get('photo_url')
+        # print(username,password,phone,e_mail)
+        if file_obj:
+            file_name = './media/avatar/' + user_name + '_' + str(int(time.time())) + '.' + file_obj.name.split('.')[
+                -1]  # 构造文件名以及文件路径
+            photo_url = 'avatar/' + user_name + '_' + str(int(time.time())) + '.' + file_obj.name.split('.')[-1]
+            if file_obj.name.split('.')[-1] not in ['jpeg', 'jpg', 'png']:
+                message = '输入文件有误'
         if ensure_password != password:
             message = "确认密码不符"
-        else:
+        if not message:
             try:
                 user = UserTable.objects.get(phone_number=phone_number)
                 user.phone_number = phone_number
@@ -111,11 +121,18 @@ def user_detail(request):
                 user.account_type = account_type
                 user.account_num = account_num
                 user.id_no = id_no
+                if file_obj:
+                    user.photo_url = photo_url
                 user.save()
+                if file_obj:
+                    with open(file_name, 'wb+') as f:
+                        f.write(file_obj.read())
             except Exception:
                 message = "修改信息失败，请仔细检查，或稍后重试"
-        request.session['username'] = user_name
         request.session['message'] = message
+        if not message:
+            request.session['username'] = user_name
+            request.session['photo_url'] = user.photo_url.url
         return redirect('user_detail')
 
 
@@ -128,16 +145,16 @@ def index(request):
             user_name = user.user_name
             request.session['username'] = user_name
 
-        #获取股票数据
+        # 获取股票数据
         stocks = []
         ts.set_token('e4ef519ae1e2dcc00beb8d11707219e6274cf24c77668e95ffd63774')
         pro = ts.pro_api()
         # 查询当前所有正常上市交易的股票列表
         data = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
-        for i in range(0,10):
+        for i in range(0, 10):
             stock = {}
-            stock['symbol'] = data.loc[i,'symbol']
-            stock['name'] = data.loc[i,'name']
+            stock['symbol'] = data.loc[i, 'symbol']
+            stock['name'] = data.loc[i, 'name']
             stocks.append(stock)
         return render(request, 'index.html', locals())
     elif request.method == 'POST':

@@ -21,7 +21,7 @@ class UserTable(models.Model):
     # 用户头像路径
     photo_url = ProcessedImageField(upload_to='avatar', default='avatar/default.png', verbose_name='头像',
                                     # 图片将处理成100 x 100的尺寸
-                                    processors=[ResizeToFill(100, 100)], )
+                                    processors=[ResizeToFill(160, 160)], )
     # 银行卡号
     account_num = models.CharField(max_length=45, null=True)
     # 银行卡类型

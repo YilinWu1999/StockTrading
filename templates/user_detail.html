@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
+
+{% block web_title %}
+    <title>个人信息管理</title>
+{% endblock web_title %}
+
 {% block content %}
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -20,6 +25,15 @@
         </section>
 
         <!-- Main content -->
+        <!-- 填写信息有误 -->
+        {% if message %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>{{ message }}</strong> 请正确填写信息！
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
@@ -32,7 +46,7 @@
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
-                            <form action="{% url 'user_detail' %}" method="post">
+                            <form action="{% url 'user_detail' %}" method="post" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <div class="card-body">
                                     <div class="form-group">
@@ -95,14 +109,13 @@
                                                placeholder="完善密码" value="{{ user.password }}">
                                     </div>
                                     <div class="form-group">
-                                        <label for="exampleInputFile">头像</label>
+                                        <label for="exampleInputFile">用户头像</label>
                                         <div class="input-group">
                                             <div class="custom-file">
-                                                <input type="file" name="photo_url" class="custom-file-input" id="exampleInputFile">
-                                                <label class="custom-file-label" for="exampleInputFile">选择文件</label>
-                                            </div>
-                                            <div class="input-group-append">
-                                                <span class="input-group-text">Upload</span>
+                                                <input type="file" name="photo_url" class="custom-file-input"
+                                                       id="exampleInputFile">
+                                                <label class="custom-file-label"
+                                                       for="exampleInputFile">Choose file</label>
                                             </div>
                                         </div>
                                     </div>
@@ -121,15 +134,6 @@
             </div>
         </section>
         <!-- /.content -->
-
-        <!-- 填写信息有误 -->
-        {% if message %}
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>{{ message }}</strong> 请正确填写信息！
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        {% endif %}
     </div>
+
 {% endblock %}
