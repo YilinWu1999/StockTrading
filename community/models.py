@@ -12,9 +12,9 @@ class CommentTable(models.Model):
     # 评论内容
     comment_content = models.TextField()
     # 评论发布用户
-    comment_user_id = models.ForeignKey(to=UserTable, on_delete=models.CASCADE)
+    comment_user = models.ForeignKey(UserTable, on_delete=models.CASCADE)
     # 评论相关股票
-    comment_stock_ts = models.ForeignKey(to=StockTable, on_delete=models.CASCADE, null=True)
+    comment_stock = models.ForeignKey(StockTable, on_delete=models.CASCADE, null=True)
     # 评论
     comment_time = models.DateField(auto_now=True)
     # 评论附加图片
