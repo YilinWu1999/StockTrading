@@ -63,3 +63,6 @@ def comment_add(request):
         print(message)
         request.session['message'] = message
         return redirect('community_index')
+
+def dicuss_add(request):
+    return render(request)
