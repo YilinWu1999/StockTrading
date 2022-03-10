@@ -3,7 +3,28 @@ import time
 from .models import *
 # Create your views here.
 def community_index(request):
-    return render(request,'community_index.html')
+    if request.method == 'GET':
+        # 1.获取全部评论
+        comment_num = 0 #评论数量
+        comments = [] #获取的评论内容
+        comments_data = CommentTable.objects.all()
+        for comment_data in comments_data:
+            comment = {}
+            comment['comment_title'] = comment_data.comment_title
+            comment['comment_content'] = comment_data.comment_content
+            comment['comment_photo'] = comment_data.comment_photo
+            comment['user_name'] = comment_data.comment_user.user_name
+            comment['user_avatar'] = comment_data.comment_user.photo_url
+            comment['comment_time'] = comment_data.comment_time
+            comment['stock_ts'] = comment_data.comment_stock.stock_ts
+            comments.append(comment)
+            comment_num+=1
+        # 2.获取当前用户的评论
+        return render(request, 'community_index.html', locals())
+
+    elif request.method == 'POST':
+        # 评论当前评论
+        return render(request, 'community_index.html')
 
 def comment_add(request):
     if request.method == 'GET':
@@ -16,8 +37,6 @@ def comment_add(request):
         comment_user_id = request.session.get('uid')
         comment_stock_ts = request.POST['stock_ts']
         file_obj = request.FILES.get('photo_url')
-        print(comment_user_id)
-        print(comment_stock_ts)
         if file_obj:
             file_name = './media/comment/' + str(comment_user_id) + '_' + str(int(time.time())) + '.' + file_obj.name.split('.')[
                 -1]  # 构造文件名以及文件路径
@@ -26,7 +45,6 @@ def comment_add(request):
                 message = '输入文件有误'
         if not message:
             try:
-                print('11111')
                 comment = CommentTable.objects.create(
                     comment_title = comment_title,
                     comment_content = comment_content,
