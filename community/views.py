@@ -5,6 +5,12 @@ from .models import *
 # Create your views here.
 def community_index(request):
     if request.method == 'GET':
+        message = ''
+        try:
+            uid = request.session['uid']
+        except Exception:
+            message = '请先登陆后再使用社区功能'
+            return render(request, 'login.html', locals())
         # 1.获取全部评论
         comments = [] #获取的评论内容
         comments_data = CommentTable.objects.all()
@@ -22,7 +28,6 @@ def community_index(request):
 
         # 2.获取当前用户的评论
         my_comments = [] #获取当前用户评论
-        uid = request.session['uid']
         user = UserTable.objects.get(id=uid)
         my_comments_data = user.commenttable_set.all()
         for my_comment_data in my_comments_data:
