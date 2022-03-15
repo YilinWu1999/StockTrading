@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 import time
 from .models import *
@@ -5,7 +6,6 @@ from .models import *
 def community_index(request):
     if request.method == 'GET':
         # 1.获取全部评论
-        comment_num = 0 #评论数量
         comments = [] #获取的评论内容
         comments_data = CommentTable.objects.all()
         for comment_data in comments_data:
@@ -17,13 +17,28 @@ def community_index(request):
             comment['user_avatar'] = comment_data.comment_user.photo_url
             comment['comment_time'] = comment_data.comment_time
             comment['stock_ts'] = comment_data.comment_stock.stock_ts
+            comment['stock_name'] = comment_data.comment_stock.stock_name
             comments.append(comment)
-            comment_num+=1
+
         # 2.获取当前用户的评论
+        my_comments = [] #获取当前用户评论
+        uid = request.session['uid']
+        user = UserTable.objects.get(id=uid)
+        my_comments_data = user.commenttable_set.all()
+        for my_comment_data in my_comments_data:
+            my_comment = {}
+            my_comment['comment_title'] = my_comment_data.comment_title
+            my_comment['comment_content'] = my_comment_data.comment_content
+            my_comment['comment_photo'] = my_comment_data.comment_photo
+            my_comment['user_name'] = my_comment_data.comment_user.user_name
+            my_comment['user_avatar'] = my_comment_data.comment_user.photo_url
+            my_comment['comment_time'] = my_comment_data.comment_time
+            my_comment['stock_ts'] = my_comment_data.comment_stock.stock_ts
+            my_comment['stock_name'] = my_comment_data.comment_stock.stock_name
+            my_comments.append(my_comment)
         return render(request, 'community_index.html', locals())
 
     elif request.method == 'POST':
-        # 评论当前评论
         return render(request, 'community_index.html')
 
 def comment_add(request):
@@ -65,4 +80,9 @@ def comment_add(request):
         return redirect('community_index')
 
 def dicuss_add(request):
+    if request.method == 'GET':
+        return render(request, 'community_index.html')
+    elif request.method == 'POST':
+        discuss_content = request.POST['discuss_content']
+
     return render(request)
