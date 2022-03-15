@@ -32,6 +32,7 @@ def community_index(request):
         my_comments_data = user.commenttable_set.all()
         for my_comment_data in my_comments_data:
             my_comment = {}
+            my_comment['comment_id'] = my_comment_data.id
             my_comment['comment_title'] = my_comment_data.comment_title
             my_comment['comment_content'] = my_comment_data.comment_content
             my_comment['comment_photo'] = my_comment_data.comment_photo
@@ -83,6 +84,17 @@ def comment_add(request):
         print(message)
         request.session['message'] = message
         return redirect('community_index')
+
+def comment_del(request):
+    if request.method == 'GET':
+        comment_id = request.GET.get('comment_id')
+        try:
+            comment = CommentTable.objects.get(id=comment_id)
+            comment.delete()
+        except:
+            return render(request, 'community_index.html')
+    return redirect('community_index')
+
 
 def dicuss_add(request):
     if request.method == 'GET':

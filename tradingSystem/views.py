@@ -3,6 +3,7 @@ from django.db.models import Q
 from .models import *
 import tushare as ts
 import time
+from datetime import date, timedelta
 
 
 # Create your views here.
@@ -148,11 +149,15 @@ def index(request):
         ts.set_token('e4ef519ae1e2dcc00beb8d11707219e6274cf24c77668e95ffd63774')
         pro = ts.pro_api()
         # 查询当前所有正常上市交易的股票列表
-        data = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
+        yesterday = (date.today() + timedelta(days=-1)).strftime("%Y%m%d")
+        data = pro.top_list(trade_date=yesterday)
+
         for i in range(0, 10):
             stock = {}
-            stock['symbol'] = data.loc[i, 'symbol']
+            stock['ts_code'] = data.loc[i, 'ts_code']
             stock['name'] = data.loc[i, 'name']
+            stock['pct_change'] = data.loc[i, 'pct_change']
+            stock['reason'] = data.loc[i, 'reason']
             stocks.append(stock)
         return render(request, 'index.html', locals())
     elif request.method == 'POST':

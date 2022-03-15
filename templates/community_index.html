@@ -58,7 +58,7 @@
                                     </li>
                                 </ul>
 
-                                <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>
+                                <a href="#" class="btn btn-primary btn-block"><b>关注</b></a>
                             </div>
                             <!-- /.card-body -->
                         </div>
@@ -91,8 +91,6 @@
                                                          src="/media/{{ comment.user_avatar }}" alt="user image">
                                                     <span class="username">
                                                     <a href="#">{{ comment.user_name }}</a>
-                                                    <a href="#" class="float-right btn-tool"><i
-                                                            class="fas fa-times"></i></a>
                                                 </span>
                                                     <span class="description">{{ comment.comment_time }}</span>
                                                 </div>
@@ -103,7 +101,7 @@
                                                 <div class="row mb-3">
                                                     <div class="col-sm-6">
                                                         <img class="img-fluid" src="/media/{{ comment.comment_photo }}"
-                                                             alt="Photo">
+                                                             alt="">
                                                     </div>
                                                     <!-- /.col -->
                                                 </div>
@@ -145,7 +143,7 @@
                                                          src="/media/{{ my_comment.user_avatar }}" alt="user image">
                                                     <span class="username">
                                                     <a href="#">{{ my_comment.user_name }}</a>
-                                                    <a href="#" class="float-right btn-tool"><i
+                                                    <a href="{% url 'comment_del' %}?comment_id={{ my_comment.comment_id }}" class="float-right btn-tool"><i
                                                             class="fas fa-times"></i></a>
                                                 </span>
                                                     <span class="description">{{ my_comment.comment_time }}</span>
@@ -157,7 +155,7 @@
                                                 <div class="row mb-3">
                                                     <div class="col-sm-6">
                                                         <img class="img-fluid" src="/media/{{ my_comment.comment_photo }}"
-                                                             alt="Photo">
+                                                             alt="">
                                                     </div>
                                                     <!-- /.col -->
                                                 </div>
