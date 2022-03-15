@@ -16,4 +16,4 @@ class NewsTable(models.Model):
 
     class Meta:
         db_table = 'news_table'
-        ordering = ['news_time']
+        ordering = ['-news_time']

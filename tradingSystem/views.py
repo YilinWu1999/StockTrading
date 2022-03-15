@@ -169,7 +169,8 @@ def index(request):
             news['title'] = news_data.news_title
             news['content'] = news_data.news_content
             news['src'] = news_data.news_source
-            news
+            news['pub_time'] = news_data.news_time
+            newses.append(news)
         return render(request, 'index.html', locals())
     elif request.method == 'POST':
         return render(request, 'index.html')

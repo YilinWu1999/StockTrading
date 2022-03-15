@@ -10,11 +10,11 @@ import time
 def news_get():
     ts.set_token('e4ef519ae1e2dcc00beb8d11707219e6274cf24c77668e95ffd63774')
     pro = ts.pro_api()
-    # 查询昨日龙虎榜
+    # 获取时间
     yesterday = (date.today() + timedelta(days=-1)).strftime("%Y-%m-%d")
     today = date.today().strftime("%Y-%m-%d")
     hms = time.strftime(" %H:%M:%S", time.localtime())
-
+    # 获取新闻数据
     try:
         news_data = pro.major_news(src='', start_date=yesterday+hms, end_date=today+hms,
                             fields='title,content,pub_time,src')
@@ -23,6 +23,8 @@ def news_get():
             news_content = news_data.loc[i, 'content']
             news_time = news_data.loc[i, 'pub_time']
             news_src = news_data.loc[i, 'src']
+            if NewsTable.objects.get(news_title=news_title):
+                break
             try:
                 news = NewsTable.objects.create(
                     news_title = news_title,
