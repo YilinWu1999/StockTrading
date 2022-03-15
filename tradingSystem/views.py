@@ -4,6 +4,7 @@ from .models import *
 import tushare as ts
 import time
 from datetime import date, timedelta
+from news.views import news_get
 
 
 # Create your views here.
@@ -146,9 +147,10 @@ def index(request):
 
         # 获取股票数据
         stocks = []
+        newses = []
         ts.set_token('e4ef519ae1e2dcc00beb8d11707219e6274cf24c77668e95ffd63774')
         pro = ts.pro_api()
-        # 查询当前所有正常上市交易的股票列表
+        # 查询昨日龙虎榜
         yesterday = (date.today() + timedelta(days=-1)).strftime("%Y%m%d")
         data = pro.top_list(trade_date=yesterday)
 
@@ -159,6 +161,15 @@ def index(request):
             stock['pct_change'] = data.loc[i, 'pct_change']
             stock['reason'] = data.loc[i, 'reason']
             stocks.append(stock)
+
+        # 获取今日新闻信息
+        news_all = news_get()
+        for news_data in news_all[:10]:
+            news = {}
+            news['title'] = news_data.news_title
+            news['content'] = news_data.news_content
+            news['src'] = news_data.news_source
+            news
         return render(request, 'index.html', locals())
     elif request.method == 'POST':
         return render(request, 'index.html')

@@ -9,7 +9,7 @@ class NewsTable(models.Model):
     # 新闻发布时间
     news_time = models.DateTimeField(auto_now=True)
     # 新闻来源
-    news_source = models.CharField(max_length=100)
+    news_src = models.CharField(max_length=100)
 
     def __str__(self):
         return '-'.join([str(self.id), self.news_title])
