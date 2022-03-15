@@ -36,6 +36,7 @@ def news_get():
             except Exception:
                 print(Exception)
     except Exception as e:
-        print('今日获取已达上限')
+        print(e)
     news_all = NewsTable.objects.all()
+    print(news_all)
     return news_all

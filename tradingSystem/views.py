@@ -164,12 +164,13 @@ def index(request):
 
         # 获取今日新闻信息
         news_all = news_get()
-        for news_data in news_all[:10]:
+
+        for news_data in news_all[0:10]:
             news = {}
             news['title'] = news_data.news_title
             news['content'] = news_data.news_content
-            news['src'] = news_data.news_source
-            news['pub_time'] = news_data.news_time
+            news['src'] = news_data.news_src
+            news['time'] = news_data.news_time
             newses.append(news)
         return render(request, 'index.html', locals())
     elif request.method == 'POST':

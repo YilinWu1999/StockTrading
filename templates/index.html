@@ -28,7 +28,7 @@
                                     <table class="table no-margin">
                                         <thead>
                                         <tr>
-                                            <th>股票ts代码</th>
+                                            <th>ts代码</th>
                                             <th>全称</th>
                                             <th>涨跌幅</th>
                                             <th>上榜理由</th>
@@ -71,12 +71,16 @@
                                         <thead>
                                         </thead>
                                         <tbody>
-                                        {% for news in news_list %}
+                                        {% for news in newses %}
                                             <tr>
                                                 <td>
-                                                    <a href=""></a>
+
+                                                    <a href="">{{ news.title }}</a>
+                                                    <small class="text-muted pull-right"><i
+                                                class="fa fa-clock-o"></i> {{ news.time }} </small>
                                                 </td>
                                             </tr>
+
                                         {% endfor %}
                                         </tbody>
                                     </table>

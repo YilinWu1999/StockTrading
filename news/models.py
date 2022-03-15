@@ -7,7 +7,7 @@ class NewsTable(models.Model):
     # 新闻内容
     news_content = models.TextField()
     # 新闻发布时间
-    news_time = models.DateTimeField(auto_now=True)
+    news_time = models.DateTimeField()
     # 新闻来源
     news_src = models.CharField(max_length=100)
 
