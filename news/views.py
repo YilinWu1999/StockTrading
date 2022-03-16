@@ -23,7 +23,7 @@ def news_get(num):
             news_content = news_data.loc[i, 'content']
             news_time = news_data.loc[i, 'pub_time']
             news_src = news_data.loc[i, 'src']
-            if not NewsTable.objects.filter(news_title=news_title):
+            if NewsTable.objects.filter(news_title=news_title):
                 break
             try:
                 news = NewsTable.objects.create(

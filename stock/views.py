@@ -78,5 +78,3 @@ def stock_all(request):
             stock['list_date'] = stock_data[i].stock_list_date
             stocks.append(stock)
         return render(request, 'stock_all.html', locals())
-
-def stock_daily():
