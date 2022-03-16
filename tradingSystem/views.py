@@ -165,6 +165,7 @@ def index(request):
         # 获取今日新闻信息
         news_all = news_get()
 
+        #这块肯定是没问题的，因为是通过函数获取的数据
         for news_data in news_all[0:10]:
             news = {}
             news['title'] = news_data.news_title
