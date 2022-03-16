@@ -7,7 +7,7 @@ import time
 
 
 
-def news_get():
+def news_get(num):
     ts.set_token('e4ef519ae1e2dcc00beb8d11707219e6274cf24c77668e95ffd63774')
     pro = ts.pro_api()
     # 获取时间
@@ -38,4 +38,15 @@ def news_get():
     except Exception as e:
         print(e)
     news_all = NewsTable.objects.all()
-    return news_all
+
+    if num == 0 :
+        num = len(news_all)
+    newses = []
+    for news_data in news_all[0:num]:
+        news = {}
+        news['title'] = news_data.news_title
+        news['content'] = news_data.news_content
+        news['src'] = news_data.news_src
+        news['time'] = news_data.news_time
+        newses.append(news)
+    return newses

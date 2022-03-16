@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
+
+from stock.models import StockTable
+from stock.views import stock_top
 from .models import *
 import tushare as ts
 import time
@@ -9,6 +12,7 @@ from news.views import news_get
 
 # Create your views here.
 
+# 用户登陆
 def user_login(request):
     if request.method == 'GET':
         if request.session.get('uid'):
@@ -35,7 +39,7 @@ def user_login(request):
         request.session['photo_url'] = user.photo_url.url
         return redirect('index')
 
-
+# 用户退出
 def user_out(request):
     if request.method == 'GET':
         request.session.flush()
@@ -43,7 +47,7 @@ def user_out(request):
     elif request.method == 'POST':
         return redirect('index')
 
-
+# 用户注册
 def user_register(request):
     if request.method == 'GET':
         return render(request, 'register.html')
@@ -80,7 +84,7 @@ def user_register(request):
             return render(request, 'register.html', locals())
         return render(request, 'login.html')
 
-
+# 用户详细信息
 def user_detail(request):
     if request.method == 'GET':
         uid = request.session.get('uid')
@@ -135,7 +139,7 @@ def user_detail(request):
             request.session['photo_url'] = user.photo_url.url
         return redirect('user_detail')
 
-
+# 网站首页
 def index(request):
     if request.method == 'GET':
         # 处理登陆状态
@@ -145,72 +149,15 @@ def index(request):
             user_name = user.user_name
             request.session['username'] = user_name
 
-        # 获取股票数据
+        # 获取龙虎榜股票数据
         stocks = []
-        newses = []
-        ts.set_token('e4ef519ae1e2dcc00beb8d11707219e6274cf24c77668e95ffd63774')
-        pro = ts.pro_api()
-        # 查询昨日龙虎榜
-        yesterday = (date.today() + timedelta(days=-1)).strftime("%Y%m%d")
-        data = pro.top_list(trade_date=yesterday)
-
-        for i in range(0, 10):
-            stock = {}
-            stock['ts_code'] = data.loc[i, 'ts_code']
-            stock['name'] = data.loc[i, 'name']
-            stock['pct_change'] = data.loc[i, 'pct_change']
-            stock['reason'] = data.loc[i, 'reason']
-            stocks.append(stock)
+        stocks = stock_top(10)
 
         # 获取今日新闻信息
-        news_all = news_get()
+        newses = []
+        newses = news_get(10)
 
-        #这块肯定是没问题的，因为是通过函数获取的数据
-        for news_data in news_all[0:10]:
-            news = {}
-            news['title'] = news_data.news_title
-            news['content'] = news_data.news_content
-            news['src'] = news_data.news_src
-            news['time'] = news_data.news_time
-            newses.append(news)
         return render(request, 'index.html', locals())
     elif request.method == 'POST':
         return render(request, 'index.html')
 
-
-def stock_update(request):
-    if request.method == 'GET':
-        # 获取/更新当前上市交易的股票信息
-        ts.set_token('e4ef519ae1e2dcc00beb8d11707219e6274cf24c77668e95ffd63774')
-        pro = ts.pro_api()
-        stocks = pro.stock_basic(exchange='', list_status='L', fields='ts_code,symbol,name,market,industry,list_date')
-        for i in range(0, len(stocks)):
-            stock_ts = stocks.loc[i, 'ts_code']
-            stock_symbol = stocks.loc[i, 'symbol']
-            stock_name = stocks.loc[i, 'name']
-            stock_industry = stocks.loc[i, 'industry']
-            stock_market = stocks.loc[i, 'market']
-            stock_list_date = stocks.loc[i, 'list_date']
-
-            try:
-                stock = StockTable.objects.filter(stock_ts=stock_ts)
-                if stock:
-                    stock.stock_ts = stock_ts
-                    stock.stock_symbol = stock_symbol
-                    stock.stock_name = stock_name
-                    stock.stock_industry = stock_industry
-                    stock.stock_market = stock_market
-                    stock.stock_list_date = stock_list_date
-                else:
-                    stock = StockTable.objects.create(
-                        stock_ts=stock_ts,
-                        stock_symbol=stock_symbol,
-                        stock_name=stock_name,
-                        stock_industry=stock_industry,
-                        stock_market=stock_market,
-                        stock_list_date=stock_list_date,
-                    )
-                stock.save()
-            except Exception:
-                print(Exception)
-        return render(request,'index.html')

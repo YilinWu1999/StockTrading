@@ -1,4 +1,6 @@
 from django.db import models
+
+from stock.models import StockTable
 from tradingSystem.models import *
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
@@ -27,7 +29,7 @@ class CommentTable(models.Model):
 
     class Meta:
         db_table = 'comment_table'
-        ordering = ['comment_time']
+        ordering = ['-comment_time']
 
 class DiscussTable(models.Model):
     # 评论评论的内容
@@ -38,3 +40,9 @@ class DiscussTable(models.Model):
     discuss_to = models.ForeignKey(CommentTable, on_delete=models.CASCADE)
     # 评论用户
     discuss_user = models.ForeignKey(UserTable, on_delete=models.CASCADE)
+    def __str__(self):
+        return '-'.join([str(self.id), self.discuss_user])
+
+    class Meta:
+        db_table = 'discuss_table'
+        ordering = ['-discuss_time']
