@@ -11,9 +11,9 @@ class StockTable(models.Model):
     # 股票名称
     stock_name = models.CharField(max_length=50)
     # 股票行业
-    stock_industry = models.CharField(max_length=45)
+    stock_industry = models.CharField(max_length=45, null=True)
     # 股票所属市场类型
-    stock_market = models.CharField(max_length=45)
+    stock_market = models.CharField(max_length=45, null=True)
     # 股票上市日期
     stock_list_date = models.CharField(max_length=45)
 
@@ -22,6 +22,7 @@ class StockTable(models.Model):
 
     class Meta:
         db_table = 'stock_table'
+        ordering = ['stock_ts']
 
 
 
@@ -61,10 +62,11 @@ class StockDailyTable(models.Model):
     # 成交额
     stock_daily_amount = models.DecimalField(max_digits=20,decimal_places=2)
     # 对应股票
-    stock = models.ForeignKey(StockTable, on_delete=models.CASCADE)
+    stock = models.ForeignKey(StockTable, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return '-'.join([self.stock_ts, self.stock_daily_date])
 
     class Meta:
         db_table = 'stock_daily_table'
+        ordering = ['stock_ts']

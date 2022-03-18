@@ -50,21 +50,29 @@
                                 <table class="table table-bordered">
                                     <thead>
                                     <tr>
-                                        <th>股票ts代码</th>
                                         <th>股票代码</th>
                                         <th>股票名称</th>
-                                        <th>所属行业</th>
-                                        <th>所属版块</th>
+                                        <th>最新价</th>
+                                        <th>涨跌</th>
+                                        <th>涨跌幅</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for stock in stocks %}
                                         <tr>
-                                            <td>{{ stock.ts }}</td>
-                                            <td>{{ stock.symbol }}</td>
-                                            <td>{{ stock.name }}</td>
-                                            <td>{{ stock.industry }}</td>
-                                            <td>{{ stock.market }}
+                                            {% if stock.change > 0 %}
+                                                <td style="color: red">{{ stock.symbol }}</td>
+                                                <td style="color: red">{{ stock.name }}</td>
+                                                <td style="color: red">{{ stock.close }}</td>
+                                                <td style="color: red">{{ stock.change }}</td>
+                                                <td style="color: red">{{ stock.pct }}%</td>
+                                            {% else %}
+                                                <td style="color: green">{{ stock.symbol }}</td>
+                                                <td style="color: green">{{ stock.name }}</td>
+                                                <td style="color: green">{{ stock.close }}</td>
+                                                <td style="color: green">{{ stock.change }}</td>
+                                                <td style="color: green">{{ stock.pct }}%</td>
+                                            {% endif %}
                                         </tr>
                                     {% endfor %}
                                     </tbody>
