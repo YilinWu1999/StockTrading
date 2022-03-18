@@ -24,7 +24,7 @@ def news_get(num):
             news_time = news_data.loc[i, 'pub_time']
             news_src = news_data.loc[i, 'src']
             if NewsTable.objects.filter(news_title=news_title):
-                break
+                continue
             try:
                 news = NewsTable.objects.create(
                     news_title = news_title,
