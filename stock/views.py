@@ -322,3 +322,9 @@ def stock_optional_add(request):
         return render(request,'stock_optional.html')
     elif request.method == 'POST':
         return render(request, 'stock_optional.html')
+
+def stock_optional(request):
+    return render(request,'')
+
+def stock_optional_del(request):
+    return render(request,'')

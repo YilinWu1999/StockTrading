@@ -1,6 +1,8 @@
 from django.db import models
 
 # Create your models here.
+from tradingSystem.models import UserTable
+
 
 class StockTable(models.Model):
     # 股票信息表，记录股票系统中的股票信息
@@ -70,3 +72,11 @@ class StockDailyTable(models.Model):
     class Meta:
         db_table = 'stock_daily_table'
         ordering = ['stock_ts']
+
+class StockOptionalTable(models.Model):
+    user = models.ForeignKey(UserTable, on_delete=models.CASCADE, null=True)
+    stock = models.ForeignKey(StockTable, on_delete=models.CASCADE, null=True)
+    def __str__(self):
+        return '-'.join([self.user.user_name, self.stock.stock_name])
+    class Meta:
+        db_table = 'stock_optional_table'
