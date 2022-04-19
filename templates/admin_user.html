@@ -1,0 +1,120 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+{% block web_title %}
+    <title>用户管理</title>
+{% endblock web_title %}
+
+{% block content %}
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>用户管理</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">管理员首页</a></li>
+                            <li class="breadcrumb-item active">用户管理</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title"></h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table id="table" class="table table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>id</th>
+                                        <th>用户名</th>
+                                        <th>手机号</th>
+                                        <th>邮箱</th>
+                                        <th>银行账户类型</th>
+                                        <th>银行账户号</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for user in users %}
+                                        <tr>
+                                            <td>{{ user.id }}</td>
+                                            <td>{{ user.name }}</td>
+                                            <td>{{ user.phone }}</td>
+                                            <td> {{ user.email }}</td>
+                                            {% if user.account_type %}
+                                                <td>{{ user.account_type }}</td>
+                                            {% else %}
+                                                <td>空</td>
+                                            {% endif %}
+                                            {% if user.account_num %}
+                                                <td>{{ user.account_num }}</td>
+                                            {% else %}
+                                                <td>空</td>
+                                            {% endif %}
+                                            <td class="project-actions text-left">
+                                                <a class="btn btn-primary btn-sm" href="#">
+                                                    <i class="fas fa-folder">
+                                                    </i>
+                                                    View
+                                                </a>
+                                                <a class="btn btn-info btn-sm" href="#">
+                                                    <i class="fas fa-pencil-alt">
+                                                    </i>
+                                                    Edit
+                                                </a>
+                                                <a class="btn btn-danger btn-sm" href="#">
+                                                    <i class="fas fa-trash">
+                                                    </i>
+                                                    Delete
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+{% endblock content %}
+{% block js %}
+    <script>
+        $(function () {
+
+            $('#table').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+    </script>
+{% endblock js %}

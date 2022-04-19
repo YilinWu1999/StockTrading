@@ -19,7 +19,8 @@ from tradingSystem import views
 from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', include('administer.urls')),
+    # path('admin/', admin.site.urls),
     path('login/', views.user_login, name='login'),
     path('register/', views.user_register, name='register'),
     path('index/', views.index, name='index'),
@@ -27,4 +28,5 @@ urlpatterns = [
     path('user_out/',views.user_out, name='user_out'),
     path('community/', include('community.urls')),
     path('stock/', include('stock.urls')),
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # 加入这个才能显示media文件
