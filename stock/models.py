@@ -80,3 +80,4 @@ class StockOptionalTable(models.Model):
         return '-'.join([self.user.user_name, self.stock.stock_name])
     class Meta:
         db_table = 'stock_optional_table'
+

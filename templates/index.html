@@ -28,7 +28,7 @@
                                     <table class="table no-margin">
                                         <thead>
                                         <tr>
-                                            <th>ts代码</th>
+                                            <th>股票代码</th>
                                             <th style="width:100px">全称</th>
                                             <th>涨跌幅</th>
                                             <th>上榜理由</th>
@@ -38,7 +38,7 @@
                                         {% for stock in stocks %}
                                             <tr>
                                                 <td>
-                                                    <a href="">{{ stock.ts_code }}</a>
+                                                    <a href="{% url 'stock_detail' %}?symbol={{ stock.symbol }}">{{ stock.symbol }}</a>
                                                 </td>
                                                 <td>{{ stock.name }}</td>
                                                 {% if stock.pct_change > 0 %}

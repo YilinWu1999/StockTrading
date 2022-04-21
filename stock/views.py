@@ -29,6 +29,8 @@ def stock_top(num):
     for i in range(0, num):
         stock = {}
         stock['ts_code'] = data.loc[i, 'ts_code']
+        temp = StockTable.objects.get(stock_ts=stock['ts_code'])
+        stock['symbol'] = temp.stock_symbol
         stock['name'] = data.loc[i, 'name']
         stock['pct_change'] = data.loc[i, 'pct_change']
         stock['reason'] = data.loc[i, 'reason']
@@ -77,7 +79,7 @@ def stock_update(request):
 def stock_all(request):
     if request.method == 'GET':
 
-        #stock_daily_update('today_all')
+        stock_daily_update('today_all')
         today = (date.today() + timedelta(days=-1)).strftime("%Y-%m-%d")
         stock_data = StockTable.objects.all()
         stock_daily_data = StockDailyTable.objects.filter(stock_daily_date=today)
@@ -121,7 +123,7 @@ def stock_daily_update(option):
         pro = ts.pro_api()
         data = pd.DataFrame()
         if option == 'today_all':
-            today = date.today().strftime("%Y%m%d")
+            today = (date.today() + timedelta(days=-1)).strftime("%Y%m%d")
             data = pro.daily(trade_date=today)
             print(data)
             for i in range(0,len(data)):
@@ -170,6 +172,13 @@ def stock_detail(request):
     stock = StockTable.objects.get(stock_symbol=symbol)
     ts_code = stock.stock_ts
 
+    uid = request.session.get('uid')
+    user = UserTable.objects.get(id=uid)
+    try:
+        optional_stock = StockOptionalTable.objects.get(user=user,stock=stock)
+        choose_flag = 0
+    except:
+        choose_flag = 1
     # 生成日K线
     # 获取需要显示的日线数据  50天的日线数据
     end_date = date.today().strftime("%Y%m%d")
@@ -257,17 +266,19 @@ def stock_detail(request):
 
     # 获取股票基本数据
     today = date.today()
-    if today.weekday()==5:
-        today = (date.today() + timedelta(days=-1)).strftime("%Y%m%d")
+    if today.weekday()==0:
+        today = (date.today() + timedelta(days=-3)).strftime("%Y%m%d")
     elif today.weekday()==6:
         today = (date.today() + timedelta(days=-2)).strftime("%Y%m%d")
     else:
-        today = date.today().strftime("%Y%m%d")
+        today = (date.today() + timedelta(days=-1)).strftime("%Y%m%d")
+    print(today)
+    print('11111111111111')
     df = pro.daily_basic(ts_code=ts_code, trade_date=today,
-                         fields='ts_code,trade_date,close,turnover_rate,volume_ratio,pe,pb,total_share,float_share,free_share,total_mv,circ_mv')
+                         fields='trade_date,close,turnover_rate,volume_ratio,pe,pb,total_share,float_share,free_share,total_mv,circ_mv')
     stock_basic = {}
     stock_basic['name'] = stock.stock_name
-    stock_basic['ts_code'] = df.loc[0, 'ts_code']
+    stock_basic['ts_code'] = ts_code
     stock_basic['trade_date'] = df.loc[0,'trade_date']
     stock_basic['close'] = df.loc[0,'close']
     stock_basic['turnover_rate'] = df.loc[0,'turnover_rate']
@@ -318,13 +329,86 @@ def month_kline(request):
 
 def stock_optional_add(request):
     if request.method == 'GET':
+        uid = request.session.get('uid')
+        symbol = request.GET['symbol']
+        try:
+            user = UserTable.objects.get(id=uid)
+            stock = StockTable.objects.get(stock_symbol=symbol)
+            optional_stock = StockOptionalTable.objects.create(
+                user=user,
+                stock=stock,
+            )
+            optional_stock.save()
+        except Exception as e:
+            print(e)
+        pa = '/stock/detail?symbol='+symbol
+        return redirect(pa)
+    elif request.method == 'POST':
+        return render(request, 'stock_optional.html')
 
-        return render(request,'stock_optional.html')
+def stock_optional_del(request):
+    if request.method == 'GET':
+        uid = request.session.get('uid')
+        symbol = request.GET['symbol']
+        try:
+            user = UserTable.objects.get(id=uid)
+            stock = StockTable.objects.get(stock_symbol=symbol)
+            optional_stock = StockOptionalTable.objects.get(user=user,stock=stock)
+            optional_stock.delete()
+        except Exception as e:
+            print(e)
+        pa = '/stock/detail?symbol='+symbol
+        return redirect(pa)
     elif request.method == 'POST':
         return render(request, 'stock_optional.html')
 
 def stock_optional(request):
-    return render(request,'')
+    if request.method == 'GET':
+        uid = request.session.get('uid')
+        user = UserTable.objects.get(id=uid)
+        optional_stocks_data = user.stockoptionaltable_set.all()
+        optional_stocks = []
+        today = (date.today() + timedelta(days=-1)).strftime("%Y-%m-%d")
+        stock_daily_data = StockDailyTable.objects.filter(stock_daily_date=today)
+        for i in range(0, len(optional_stocks_data)):
+            stock={}
+            stock_id = optional_stocks_data[i].stock_id
+            stock_data = StockTable.objects.get(stock_ts=stock_id)
+            print(stock_data)
+            stock['ts'] = stock_data.stock_ts
+            stock['symbol'] = stock_data.stock_symbol
+            stock['name'] = stock_data.stock_name
+            try:
+                stock_daily = stock_daily_data.get(stock_ts=stock['ts'])
+                stock['close'] = stock_daily.stock_daily_close
+                stock['change'] = stock_daily.stock_daily_change
+                stock['pct'] = stock_daily.stock_daily_pct
+            except:
+                stock['close'] = 0
+                stock['change'] = 0
+                stock['pct'] = 0
 
-def stock_optional_del(request):
-    return render(request,'')
+            optional_stocks.append(stock)
+        return render(request, 'stock_optional.html', locals())
+
+def stock_select(request):
+    if request.method == 'GET':
+        ts.set_token('e4ef519ae1e2dcc00beb8d11707219e6274cf24c77668e95ffd63774')
+        pro = ts.pro_api()
+        end_date = date.today().strftime("%Y%m%d")
+        start_date = (date.today() + timedelta(days=-500)).strftime("%Y%m%d")
+        df = pro.daily(trade_date=end_date)
+        stocks = df[['ts_code','close']]
+        stocks = StockTable.objects.all()
+        for stock in stocks:
+            ts_code = stock.stock_ts
+            df = ts.pro_bar(ts_code=ts_code, start_date=start_date, end_date=end_date, ma=[50,150,200])
+            ma = df[['ts_code','ma50','ma150','ma200']]
+            df = pro.daily(trade_date='20180810')
+
+        # end_date = date.today().strftime("%Y%m%d")
+        # start_date = (date.today() + timedelta(days=-500)).strftime("%Y%m%d")
+        # df = ts.pro_bar(ts_code='000001.SZ', start_date=start_date, end_date=end_date, ma=[50, 150, 200])
+        # ma = df[['ts_code', 'ma50', 'ma150', 'ma200']]
+        # print(ma)
+    return render(request,'stock_select.html')

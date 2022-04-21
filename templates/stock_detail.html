@@ -34,9 +34,14 @@
                         <div class="card card-primary card-outline">
                             <div class="card-header with-border">
                                 <h3 class="card-title">个股K线图</h3>
-                                <form class="float-right" action="{% url 'stock_optional_add' %}?symbol={{ symbol }}" method="get">
-                                    <button type="submit" class="btn btn-outline-primary float-right ">添加到自选</button>
-                                </form>
+
+                                {% if choose_flag == 1 %}
+                                    <a class="btn btn-outline-primary float-right "
+                                       href="{% url 'stock_optional_add' %}?symbol={{ symbol }}">添加到自选</a>
+                                {% elif choose_flag == 0 %}
+                                    <a class="btn btn-outline-danger float-right "
+                                       href="{% url 'stock_optional_del' %}?symbol={{ symbol }}">删除自选</a>
+                                {% endif %}
 
                             </div>
                             <div class="card-body">
