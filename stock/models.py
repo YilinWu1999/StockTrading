@@ -81,3 +81,12 @@ class StockOptionalTable(models.Model):
     class Meta:
         db_table = 'stock_optional_table'
 
+class StockUpdateTable(models.Model):
+    #更新的什么内容
+    stock_update_type = models.CharField(max_length=45)
+    #什么时候更新的
+    stock_update_date = models.CharField(max_length=45)
+    def __str__(self):
+        return '-'.join([self.stock_update_type, self.stock_update_date])
+    class Meta:
+        db_table = 'stock_update_table'

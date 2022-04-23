@@ -24,193 +24,199 @@
                                 <h3 class="card-title">用户自定义选股</h3>
                             </div>
                             <div class="card-body">
-                                <div class="row blockquote">
-                                    <div class="col-lg-12">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
+                                <form action="{% url 'stock_select' %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="row blockquote">
+                                        <div class="col-lg-12">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                      <input name="eps_check" type="checkbox">
+                                                    </span>
+                                                </div>
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                  <input type="checkbox">
+                                                    基本每股收益大于
                                                 </span>
+                                                </div>
+                                                <input name="eps" type="number" class="form-control">
                                             </div>
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    动态市盈率小于
-                                                </span>
-                                            </div>
-                                            <input type="text" class="form-control">
+                                            <!-- /input-group -->
                                         </div>
-                                        <!-- /input-group -->
                                     </div>
-                                </div>
-                                <div class="row blockquote">
-                                    <div class="col-lg-12">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
+                                    <div class="row blockquote">
+                                        <div class="col-lg-12">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                  <input type="checkbox">
+                                                  <input name="trp_check" type="checkbox">
                                                 </span>
-                                            </div>
-                                            <div class="input-group-prepend">
+                                                </div>
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                    连续三季度净利润增长率大于
+                                                    每股营业总收入大于
                                                 </span>
-                                            </div>
-                                            <input type="text" class="form-control">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                  %
-                                                </span>
-                                            </div>
+                                                </div>
+                                                <input name="trp" type="number" class="form-control">
 
+                                            </div>
+                                            <!-- /input-group -->
                                         </div>
-                                        <!-- /input-group -->
                                     </div>
-                                </div>
-                                <div class="row blockquote">
-                                    <div class="col-lg-12">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
+                                    <div class="row blockquote">
+                                        <div class="col-lg-12">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                  <input type="checkbox">
+                                                  <input name="bps_check" type="checkbox">
                                                 </span>
-                                            </div>
-                                            <div class="input-group-prepend">
+                                                </div>
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                    总市值小于
+                                                    每股净资产大于
                                                 </span>
+                                                </div>
+                                                <input name="bps" type="text" class="form-control">
                                             </div>
-                                            <input type="text" class="form-control">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                  亿
-                                                </span>
-                                            </div>
+                                            <!-- /input-group -->
                                         </div>
-                                        <!-- /input-group -->
                                     </div>
-                                </div>
-                                <div class="row blockquote">
-                                    <div class="col-lg-12">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
+                                    <div class="row blockquote">
+                                        <div class="col-lg-12">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                  <input type="checkbox">
+                                                  <input name="roa_check" type="checkbox">
                                                 </span>
-                                            </div>
-                                            <div class="input-group-prepend">
+                                                </div>
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                    连续三年净利润增长率大于
+                                                    总资产报酬率大于
                                                 </span>
-                                            </div>
-                                            <input type="text" class="form-control">
-                                            <div class="input-group-prepend">
+                                                </div>
+                                                <input name="roa" type="text" class="form-control">
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
                                                   %
                                                 </span>
+                                                </div>
                                             </div>
+                                            <!-- /input-group -->
                                         </div>
-                                        <!-- /input-group -->
                                     </div>
-                                </div>
-                                <div class="row blockquote">
-                                    <div class="col-lg-12">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
+                                    <div class="row blockquote">
+                                        <div class="col-lg-12">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                  <input type="checkbox">
+                                                  <input name="cta_check" type="checkbox">
                                                 </span>
-                                            </div>
-                                            <div class="input-group-prepend">
+                                                </div>
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                    每股资本公积金占股价
+                                                    流动资产占总资产
                                                 </span>
-                                            </div>
-                                            <input type="text" class="form-control">
-                                            <div class="input-group-prepend">
+                                                </div>
+                                                <input name="cta" type="text" class="form-control">
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
                                                     %以上
                                                 </span>
+                                                </div>
                                             </div>
+                                            <!-- /input-group -->
                                         </div>
-                                        <!-- /input-group -->
-                                    </div>
 
-                                </div>
-                                <div class="row blockquote">
-                                    <div class="col-lg-12">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                  <input type="checkbox">
-                                                </span>
-                                            </div>
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    连续三年股价增长率大于
-                                                </span>
-                                            </div>
-                                            <input type="text" class="form-control">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    %
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <!-- /input-group -->
                                     </div>
-                                </div>
-                                <div class="row blockquote">
-                                    <div class="col-lg-12">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
+                                    <div class="row blockquote">
+                                        <div class="col-lg-12">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                  <input type="checkbox">
+                                                  <input name="ote_check" type="checkbox">
                                                 </span>
-                                            </div>
-                                            <div class="input-group-prepend">
+                                                </div>
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                    销售毛利润大于
+                                                    营业利润占利润总额
                                                 </span>
-                                            </div>
-                                            <input type="text" class="form-control">
-                                            <div class="input-group-prepend">
+                                                </div>
+                                                <input name="ote" type="text" class="form-control">
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                    %
+                                                    %以上
                                                 </span>
+                                                </div>
                                             </div>
+                                            <!-- /input-group -->
                                         </div>
-                                        <!-- /input-group -->
                                     </div>
-                                </div>
-                                <div class="row blockquote">
-                                    <div class="col-lg-12">
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
+                                    <div class="row blockquote">
+                                        <div class="col-lg-12">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                  <input type="checkbox">
+                                                  <input name="crp_check" type="checkbox">
                                                 </span>
-                                            </div>
-                                            <div class="input-group-prepend">
+                                                </div>
+                                                <div class="input-group-prepend">
                                                 <span class="input-group-text">
-                                                    主营业务收入增长率（年）
+                                                    每股资本公积小于
                                                 </span>
+                                                </div>
+                                                <input name="crp" type="text" class="form-control">
                                             </div>
-                                            <input type="text" class="form-control">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    %
-                                                </span>
-                                            </div>
+                                            <!-- /input-group -->
                                         </div>
-                                        <!-- /input-group -->
                                     </div>
-                                </div>
+                                    <div class="row blockquote">
+                                        <div class="col-lg-12">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                  <input name="fcff_check" type="checkbox">
+                                                </span>
+                                                </div>
+                                                <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    企业自由现金流量大于
+                                                </span>
+                                                </div>
+                                                <input name="fcff" type="text" class="form-control">
+                                            </div>
+                                            <!-- /input-group -->
+                                        </div>
+                                    </div>
+                                    <div class="row blockquote">
+                                        <div class="col-lg-12">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                  <input name="ebt_check" type="checkbox">
+                                                </span>
+                                                </div>
+                                                <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    利润总额同比增长
+                                                </span>
+                                                </div>
+                                                <input name="ebt" type="text" class="form-control">
+                                                <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    %以上
+                                                </span>
+                                                </div>
+                                            </div>
+                                            <!-- /input-group -->
+                                        </div>
+                                    </div>
+                                    <div class="input-group-append">
+                                        <div class="col-lg-10"></div>
+                                        <button type="submit" class="btn btn-danger col-lg-2">查询</button>
+                                    </div>
+                                </form>
                             </div>
                             <div class="card-footer clearfix">
-                                <a href=""
-                                   class="btn btn-sm btn-info btn-flat pull-left">购入股票</a>
-                                <a href="{% url 'stock_all' %}"
-                                   class="btn btn-sm btn-default btn-flat pull-right">查看全部</a>
                             </div>
                         </div>
 
@@ -220,23 +226,40 @@
                     <section class="col-lg-6 connectedSortable">
                         <div class="card card-primary card-outline">
                             <div class="card-header with-border">
-                                <h3 class="card-title">重大新闻</h3>
+                                <h3 class="card-title">默认策略精选选股</h3>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table no-margin">
                                         <thead>
+                                        <tr>
+                                            <th>股票代码</th>
+                                            <th>股票名称</th>
+                                            <th>最新价</th>
+                                            <th>涨跌</th>
+                                            <th>涨跌幅</th>
+                                        </tr>
                                         </thead>
                                         <tbody>
-                                        {% for news in newses %}
+                                        {% for stock in good_stocks %}
                                             <tr>
-                                                <td>
-
-                                                    <p><a href="">{{ news.title }}</a></p>
-                                                    <small class="text-muted pull-right"><i
-                                                            class="fa fa-clock-o"></i> {{ news.time }} {{ news.src }}
-                                                    </small>
-                                                </td>
+                                                {% if stock.change > 0 %}
+                                                    <td style="color: red"><a
+                                                            href="{% url 'stock_detail' %}?symbol={{ stock.symbol }}">{{ stock.symbol }}</a>
+                                                    </td>
+                                                    <td style="color: red">{{ stock.name }}</td>
+                                                    <td style="color: red">{{ stock.close }}</td>
+                                                    <td style="color: red">{{ stock.change }}</td>
+                                                    <td style="color: red">{{ stock.pct }}%</td>
+                                                {% else %}
+                                                    <td style="color: green"><a
+                                                            href="{% url 'stock_detail' %}?symbol={{ stock.symbol }}">{{ stock.symbol }}</a>
+                                                    </td>
+                                                    <td style="color: green">{{ stock.name }}</td>
+                                                    <td style="color: green">{{ stock.close }}</td>
+                                                    <td style="color: green">{{ stock.change }}</td>
+                                                    <td style="color: green">{{ stock.pct }}%</td>
+                                                {% endif %}
                                             </tr>
 
                                         {% endfor %}
@@ -245,10 +268,7 @@
                                 </div>
                             </div>
                             <div class="card-footer clearfix">
-                                <a href=""
-                                   class="btn btn-sm btn-info btn-flat pull-right" id="change_btn"><i
-                                        class="fa fa-refresh fa-spin"></i>
-                                    换一波瞅瞅</a>
+                                策略基于MM选股策略
                             </div>
                         </div>
                     </section>

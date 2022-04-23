@@ -12,5 +12,6 @@ urlpatterns = [
     path('detail/daily_kline/', views.daily_kline, name="daily_kline"),
     path('detail/week_kline/', views.week_kline, name="week_kline"),
     path('detail/month_kline/', views.month_kline, name="month_kline"),
-    path('select/', views.stock_select, name="stock_select")
+    path('select/', views.stock_select, name="stock_select"),
+
 ]

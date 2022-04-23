@@ -5,6 +5,12 @@ from stock.models import StockTable
 from tradingSystem.models import UserTable
 # Create your views here.
 
+def admin_login(request):
+    if request.method == 'GET':
+        return render(request,'admin_login.html')
+    elif request.method == 'POST':
+        return render(request, 'admin_login.html')
+
 def admin_index(request):
     return render(request, 'admin_index.html')
 

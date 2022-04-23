@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block web_title %}
+    <title>热点新闻</title>
+{% endblock %}
+{% block content %}
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>热点新闻</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">首页</a></li>
+                            <li class="breadcrumb-item active">热点新闻</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header p-2">
+                                精选热点新闻
+                            </div><!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="tab-content">
+                                    <!-- 全部评论 -->
+                                    <div class="active tab-pane">
+
+                                        <!-- Post -->
+                                        {% for news in newses %}
+                                            <div class="post">
+                                                <div class="user-block">
+                                                    <span class="username">
+                                                    <a href="#">{{ news.title }}</a>
+                                                    </span>
+                                                    <span class="description">{{ news.time }}</span>
+                                                </div>
+                                                <!-- /.user-block -->
+                                                <p>
+                                                    {{ news.content }}
+                                                </p>
+                                                <p>
+                                                    {{ news.src }}
+                                                </p>
+
+                                            </div>
+                                        {% endfor %}
+                                        <!-- /.post -->
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                </div>
+                                <!-- /.tab-content -->
+                            </div><!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+{% endblock content %}

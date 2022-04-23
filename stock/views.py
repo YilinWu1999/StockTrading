@@ -73,7 +73,6 @@ def stock_update(request):
                 stock.save()
             except Exception:
                 print(Exception)
-                print('1111111')
         return redirect('index')
 
 def stock_all(request):
@@ -81,30 +80,56 @@ def stock_all(request):
 
         stock_daily_update('today_all')
         today = (date.today() + timedelta(days=-1)).strftime("%Y-%m-%d")
-        stock_data = StockTable.objects.all()
+        # stock_data = StockTable.objects.all()
         stock_daily_data = StockDailyTable.objects.filter(stock_daily_date=today)
         stocks=[]
-        for i in range(0, len(stock_data)):
+        for i in range(0, len(stock_daily_data)):
             stock={}
-            stock['ts'] = stock_data[i].stock_ts
-            stock['symbol'] = stock_data[i].stock_symbol
-            stock['name'] = stock_data[i].stock_name
+            ts_code = stock_daily_data[i].stock_ts
+            stock['ts'] = ts_code
             try:
-                stock_daily = stock_daily_data.get(stock_ts=stock['ts'])
-                stock['close'] = stock_daily.stock_daily_close
-                stock['change'] = stock_daily.stock_daily_change
-                stock['pct'] = stock_daily.stock_daily_pct
+                stock_data = StockTable.objects.get(stock_ts=ts_code)
+                stock['symbol'] = stock_data.stock_symbol
+                stock['name'] = stock_data.stock_name
+                stock['close'] = stock_daily_data[i].stock_daily_close
+                stock['change'] = stock_daily_data[i].stock_daily_change
+                stock['pct'] = stock_daily_data[i].stock_daily_pct
+                stocks.append(stock)
             except:
-                stock['close'] = 0
-                stock['change'] = 0
-                stock['pct'] = 0
-
-            stocks.append(stock)
+                print(ts_code)
         # page_num = request.GET.get('page',1)
         # paginator = Paginator(stocks,20)
         # c_page = paginator.page(int(page_num))
         return render(request, 'stock_all.html', locals())
 
+# def stock_all(request):
+#     if request.method == 'GET':
+#
+#         stock_daily_update('today_all')
+#         today = (date.today() + timedelta(days=-1)).strftime("%Y-%m-%d")
+#         stock_data = StockTable.objects.all()
+#         stock_daily_data = StockDailyTable.objects.filter(stock_daily_date=today)
+#         stocks=[]
+#         for i in range(0, len(stock_data)):
+#             stock={}
+#             stock['ts'] = stock_data[i].stock_ts
+#             stock['symbol'] = stock_data[i].stock_symbol
+#             stock['name'] = stock_data[i].stock_name
+#             try:
+#                 stock_daily = stock_daily_data.get(stock_ts=stock['ts'])
+#                 stock['close'] = stock_daily.stock_daily_close
+#                 stock['change'] = stock_daily.stock_daily_change
+#                 stock['pct'] = stock_daily.stock_daily_pct
+#             except:
+#                 stock['close'] = 0
+#                 stock['change'] = 0
+#                 stock['pct'] = 0
+#
+#             stocks.append(stock)
+#         # page_num = request.GET.get('page',1)
+#         # paginator = Paginator(stocks,20)
+#         # c_page = paginator.page(int(page_num))
+#         return render(request, 'stock_all.html', locals())
 
 # ts_code 	str 	股票代码
 # trade_date 	str 	交易日期
@@ -121,47 +146,55 @@ def stock_daily_update(option):
         # 获取股票日线信息
         ts.set_token('e4ef519ae1e2dcc00beb8d11707219e6274cf24c77668e95ffd63774')
         pro = ts.pro_api()
-        data = pd.DataFrame()
+        today = (date.today() + timedelta(days=-1)).strftime("%Y%m%d")
         if option == 'today_all':
-            today = (date.today() + timedelta(days=-1)).strftime("%Y%m%d")
-            data = pro.daily(trade_date=today)
-            print(data)
-            for i in range(0,len(data)):
-                stock_ts = data.loc[i, 'ts_code']
-                stock_daily_date = pd.to_datetime(data.loc[i, 'trade_date'])
-                stock_daily_open = data.loc[i, 'open']
-                stock_daily_high = data.loc[i, 'high']
-                stock_daily_low = data.loc[i, 'low']
-                stock_daily_close = data.loc[i, 'close']
-                stock_daily_pclose = data.loc[i, 'pre_close']
-                stock_daily_change = data.loc[i, 'change']
-                stock_daily_pct = data.loc[i, 'pct_chg']
-                stock_daily_vol = data.loc[i, 'vol']
-                stock_daily_amount = data.loc[i, 'amount']
+            try:
+                obj = StockUpdateTable.objects.get(stock_update_type='stock_daily',stock_update_date=today)
+            except:
+                print(Exception)
+                data = pro.daily(trade_date=today)
+                print(data)
+                for i in range(0,len(data)):
+                    stock_ts = data.loc[i, 'ts_code']
+                    stock_daily_date = pd.to_datetime(data.loc[i, 'trade_date'])
+                    stock_daily_open = data.loc[i, 'open']
+                    stock_daily_high = data.loc[i, 'high']
+                    stock_daily_low = data.loc[i, 'low']
+                    stock_daily_close = data.loc[i, 'close']
+                    stock_daily_pclose = data.loc[i, 'pre_close']
+                    stock_daily_change = data.loc[i, 'change']
+                    stock_daily_pct = data.loc[i, 'pct_chg']
+                    stock_daily_vol = data.loc[i, 'vol']
+                    stock_daily_amount = data.loc[i, 'amount']
+                    try:
+                        stock = StockTable.objects.get(stock_ts=stock_ts)
+                    except Exception as e:
+                        print(stock_ts+'该股还未上市')
+                    if StockDailyTable.objects.filter(stock_ts=stock_ts,stock_daily_date=stock_daily_date):
+                        continue;
+                    try:
+                        stock_daily = StockDailyTable.objects.create(
+                            stock_ts = stock_ts,
+                            stock_daily_date = stock_daily_date,
+                            stock_daily_open = stock_daily_open,
+                            stock_daily_high = stock_daily_high,
+                            stock_daily_low = stock_daily_low,
+                            stock_daily_close = stock_daily_close,
+                            stock_daily_pclose = stock_daily_pclose,
+                            stock_daily_change = stock_daily_change,
+                            stock_daily_pct = stock_daily_pct,
+                            stock_daily_vol = stock_daily_vol,
+                            stock_daily_amount = stock_daily_amount,
+                            stock = stock
+                        )
+                        stock_daily.save()
+                    except Exception as e:
+                        print('个股日线信息获取失败')
+                        print(e)
                 try:
-                    stock = StockTable.objects.get(stock_ts=stock_ts)
+                    obj = StockUpdateTable(stock_update_type='stock_daily',stock_update_date=today)
+                    obj.save()
                 except Exception as e:
-                    print(stock_ts+'该股还未上市')
-                if StockDailyTable.objects.filter(stock_ts=stock_ts,stock_daily_date=stock_daily_date):
-                    continue;
-                try:
-                    stock_daily = StockDailyTable.objects.create(
-                        stock_ts = stock_ts,
-                        stock_daily_date = stock_daily_date,
-                        stock_daily_open = stock_daily_open,
-                        stock_daily_high = stock_daily_high,
-                        stock_daily_low = stock_daily_low,
-                        stock_daily_close = stock_daily_close,
-                        stock_daily_pclose = stock_daily_pclose,
-                        stock_daily_change = stock_daily_change,
-                        stock_daily_pct = stock_daily_pct,
-                        stock_daily_vol = stock_daily_vol,
-                        stock_daily_amount = stock_daily_amount,
-                        stock = stock
-                    )
-                    stock_daily.save()
-                except Exception as e:
-                    print('个股日线信息获取失败')
                     print(e)
 
 def stock_detail(request):
@@ -169,6 +202,7 @@ def stock_detail(request):
     ts.set_token('e4ef519ae1e2dcc00beb8d11707219e6274cf24c77668e95ffd63774')
     pro = ts.pro_api()
     symbol = request.GET['symbol']
+    symbol = symbol[0:6]
     stock = StockTable.objects.get(stock_symbol=symbol)
     ts_code = stock.stock_ts
 
@@ -301,7 +335,7 @@ def stock_detail(request):
     stock_basic['pre_close'] = df.loc[0, 'pre_close']
 
     # 获取股票财务信息
-    df = pro.fina_indicator(ts_code=ts_code,period="20211231",fields='eps,bps,cfps,roe,undist_profit_ps,capital_rese_ps,profit_dedt,or_yoy,q_op_yoy,debt_to_assets,npta,gross_margin')
+    df = pro.fina_indicator(ts_code=ts_code,period="20201231",fields='eps,bps,cfps,roe,undist_profit_ps,capital_rese_ps,profit_dedt,or_yoy,q_op_yoy,debt_to_assets,npta,gross_margin')
     stock_finance = {}
     stock_finance['eps'] = df.loc[0, 'eps']
     stock_finance['bps'] = df.loc[0, 'bps']
@@ -391,24 +425,99 @@ def stock_optional(request):
             optional_stocks.append(stock)
         return render(request, 'stock_optional.html', locals())
 
+#默认选股策略基于MM
+    # 股票价格高于150天均线和200天均线 实现
+    # 150日均线高于200日均线 实现
+    # 200日均线上升至少1个月 实现
+    # 50日均线高于150日均线和200日均线 实现
+    # 股票价格高于50日均线 实现
+    # 股票价格比52周低点高30% 待实现
+    # 股票价格在52周高点的25%以内 待实现
+    # 相对强弱指数(RS)大于等于70，这里的相对强弱指的是股票与大盘对比，RS = 股票1年收益率 / 基准指数1年收益率 待实现
 def stock_select(request):
     if request.method == 'GET':
         ts.set_token('e4ef519ae1e2dcc00beb8d11707219e6274cf24c77668e95ffd63774')
-        pro = ts.pro_api()
-        end_date = date.today().strftime("%Y%m%d")
+        end_date = (date.today() + timedelta(days=-1)).strftime("%Y%m%d")
         start_date = (date.today() + timedelta(days=-500)).strftime("%Y%m%d")
-        df = pro.daily(trade_date=end_date)
-        stocks = df[['ts_code','close']]
-        stocks = StockTable.objects.all()
-        for stock in stocks:
+        today = (date.today() + timedelta(days=-1)).strftime("%Y-%m-%d")
+        stock_daily_update('today_all')
+        stocks_daily_data = StockDailyTable.objects.filter(stock_daily_date=today)
+        good_stocks = []
+        i=0
+        for stock in stocks_daily_data:
+            if i>=10:
+                break;
+            good_stock = {}
             ts_code = stock.stock_ts
-            df = ts.pro_bar(ts_code=ts_code, start_date=start_date, end_date=end_date, ma=[50,150,200])
-            ma = df[['ts_code','ma50','ma150','ma200']]
-            df = pro.daily(trade_date='20180810')
-
+            try:
+                if stock.stock_daily_change<0:
+                    continue
+                df = ts.pro_bar(ts_code=ts_code, start_date=start_date, end_date=end_date, ma=[50,150,200])
+                ma200 = df[['ma200']]
+                flag = 1
+                for j in range(0,30):
+                    if (float(ma200.loc[j]-ma200.loc[j+1]))<1e-9:
+                        flag = 0
+                        break
+                if flag==0:
+                    continue
+                ma = df[['ts_code','ma50','ma150','ma200']].loc[0]
+                if ma['ma150']>ma['ma200'] and ma['ma50']>ma['ma150'] and ma['ma50']>ma['ma200'] and stock.stock_daily_close>ma['ma150'] and stock.stock_daily_close>ma['ma200'] and stock.stock_daily_close>ma['ma50']:
+                    stock_data = StockTable.objects.get(stock_ts=ts_code)
+                    good_stock['symbol'] = stock_data.stock_symbol
+                    good_stock['name'] = stock_data.stock_name
+                    good_stock['close'] = stock.stock_daily_close
+                    good_stock['pct'] = stock.stock_daily_pct
+                    good_stock['change'] = stock.stock_daily_change
+                    good_stocks.append(good_stock)
+                    i+=1
+            except Exception as e:
+                print(e)
+        print(good_stocks)
+        return render(request, 'stock_select.html', locals())
         # end_date = date.today().strftime("%Y%m%d")
         # start_date = (date.today() + timedelta(days=-500)).strftime("%Y%m%d")
         # df = ts.pro_bar(ts_code='000001.SZ', start_date=start_date, end_date=end_date, ma=[50, 150, 200])
-        # ma = df[['ts_code', 'ma50', 'ma150', 'ma200']]
-        # print(ma)
-    return render(request,'stock_select.html')
+        # ma = df[['ts_code', 'ma50', 'ma150', 'ma200']].loc[0]
+        # print(ma['ts_code'])
+        # print(ma['ma50']>ma['ma150'])
+    elif request.method == 'POST':
+        ts.set_token('e4ef519ae1e2dcc00beb8d11707219e6274cf24c77668e95ffd63774')
+        pro = ts.pro_api()
+        today = (date.today() + timedelta(days=-1)).strftime("%Y-%m-%d")
+        stocks_data = StockTable.objects.all()
+        good_stocks = []
+        for stock_data in stocks_data:
+            good_stock = {}
+            ts_code = stock_data.stock_ts
+            try:
+                df = pro.fina_indicator(ts_code=ts_code, period="20201231",
+                                fields='eps,total_revenue_ps,bps,roa,ca_to_assets,op_to_ebt,capital_rese_ps,fcff,ebt_yoy')
+                if request.POST.get('eps_check') and df[['eps']].loc[0] < request.POST.get('eps'):
+                    continue
+                if request.POST.get('trp_check') and df[['total_revenue_ps']].loc[0] < request.POST.get('eps'):
+                    continue
+                if request.POST.get('bps_check') and df[['bps']].loc[0] < request.POST.get('bps'):
+                    continue
+                if request.POST.get('roa_check') and df[['roa']].loc[0] < request.POST.get('roa'):
+                    continue
+                if request.POST.get('cta_check') and df[['ca_to_assets']].loc[0] < request.POST.get('cta'):
+                    continue
+                if request.POST.get('ote_check') and df[['op_to_ebt']].loc[0] < request.POST.get('ote'):
+                    continue
+                if request.POST.get('crp_check') and df[['capital_rese_ps']].loc[0] > request.POST.get('crp'):
+                    continue
+                if request.POST.get('fcff_check') and df[['fcff']].loc[0] < request.POST.get('fcff'):
+                    continue
+                if request.POST.get('ebt_check') and df[['ebt_yoy']].loc[0] < request.POST.get('ebt'):
+                    continue
+                good_stock['symbol'] = stock_data.stock_symbol
+                good_stock['name'] = stock_data.stock_name
+                stock_daily_data = StockDailyTable.objects.filter(stock_ts=ts_code,stock_daily_date=today)
+                good_stock['close'] = stock_daily_data.stock_daily_close
+                good_stock['pct'] = stock_daily_data.stock_daily_pct
+                good_stock['change'] = stock_daily_data.stock_daily_change
+                good_stocks.append(good_stock)
+            except Exception as e:
+                print(e)
+        return render(request,'stock_select_list.html',locals())

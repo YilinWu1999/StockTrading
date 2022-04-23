@@ -28,5 +28,6 @@ urlpatterns = [
     path('user_out/',views.user_out, name='user_out'),
     path('community/', include('community.urls')),
     path('stock/', include('stock.urls')),
+    path('news/',include('news.urls'))
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # 加入这个才能显示media文件

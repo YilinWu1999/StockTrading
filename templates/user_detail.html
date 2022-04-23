@@ -1,23 +1,23 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block web_title %}
-    <title>自选列表</title>
+    <title>个人信息管理</title>
 {% endblock web_title %}
 
 {% block content %}
-    <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>自选列表</h1>
+                        <h1>个人信息管理</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">首页</a></li>
-                            <li class="breadcrumb-item active">自选列表</li>
+                            <li class="breadcrumb-item active">个人信息管理</li>
                         </ol>
                     </div>
                 </div>
@@ -25,106 +25,115 @@
         </section>
 
         <!-- Main content -->
+        <!-- 填写信息有误 -->
+        {% if message %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>{{ message }}</strong> 请正确填写信息！
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
+                    <!-- left column -->
                     <div class="col-md-12">
-                        <div class="card">
+                        <!-- general form elements -->
+                        <div class="card card-primary">
                             <div class="card-header">
-                                <h3 class="card-title">自选列表</h3>
-                                <div class="card-tools">
-                                    <div class="input-group input-group-sm" style="width: 150px;">
-                                        <input type="text" name="table_search" class="form-control float-right"
-                                               placeholder="Search">
-
-                                        <div class="input-group-append">
-                                            <button type="submit" class="btn btn-default">
-                                                <i class="fas fa-search"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <h3 class="card-title">个人信息</h3>
                             </div>
                             <!-- /.card-header -->
-                            <div class="card-body">
-                                <table id='table' class="table table-bordered">
-                                    <thead>
-                                    <tr>
-                                        <th>股票代码</th>
-                                        <th>股票名称</th>
-                                        <th>最新价</th>
-                                        <th>涨跌</th>
-                                        <th>涨跌幅</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for stock in stocks %}
-                                        <tr>
-                                            {% if stock.change > 0 %}
-                                                <td style="color: red"><a href="{% url 'stock_detail' %}?symbol={{ stock.symbol }}">{{ stock.symbol }}</a></td>
-                                                <td style="color: red">{{ stock.name }}</td>
-                                                <td style="color: red">{{ stock.close }}</td>
-                                                <td style="color: red">{{ stock.change }}</td>
-                                                <td style="color: red">{{ stock.pct }}%</td>
-                                            {% else %}
-                                                <td style="color: green"><a href="{% url 'stock_detail' %}?symbol={{ stock.symbol }}">{{ stock.symbol }}</a></td>
-                                                <td style="color: green">{{ stock.name }}</td>
-                                                <td style="color: green">{{ stock.close }}</td>
-                                                <td style="color: green">{{ stock.change }}</td>
-                                                <td style="color: green">{{ stock.pct }}%</td>
-                                            {% endif %}
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- /.card-body -->
-{#                            <div class="card-footer clearfix">#}
-{#                                <ul class="pagination pagination-sm m-0 float-right">#}
-{#                                    {% if c_page.has_previous %}#}
-{#                                        <li class="page-item"><a class="page-link" href="{% url 'stock_all' %}?page={{ c_page.previous_page_number }}">上一页</a></li>#}
-{#                                    {% else %}#}
-{#                                        <li class="page-item page-link">上一页</li>#}
-{#                                    {% endif %}#}
-{#                                    {% for p_num in paginator.page_range %}#}
-{#                                        {% if p_num == c_page.number %}#}
-{#                                            <li class="page-item page-link" style="color: #fffffc;background-color: #0c84ff">{{ p_num }}</li>#}
-{#                                        {% elif p_num >= c_page.number|add:-3 and p_num <= c_page.number|add:3 %}#}
-{#                                            <li class="page-item"><a class="page-link" href="{% url 'stock_all' %}?page={{ p_num }}">{{ p_num }}</a></li>#}
-{#                                        {% endif %}#}
-{#                                    {% endfor %}#}
-{#                                    {% if c_page.has_next %}#}
-{#                                        <li class="page-item"><a class="page-link" href="{% url 'stock_all' %}?page={{ c_page.next_page_number }}">下一页</a></li>#}
-{#                                    {% else %}#}
-{#                                        <li class="page-item page-link">下一页</li>#}
-{#                                    {% endif %}#}
-{#                                </ul>#}
-{#                            </div>#}
+                            <!-- form start -->
+                            <form action="{% url 'user_detail' %}" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="InputUserName">用户名</label>
+                                        <input type="text" name="user_name" class="form-control" id="exampleInputEmail1"
+                                               placeholder="完善用户名" value="{{ user.user_name }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputPhoneNumber">手机号</label>
+                                        <input type="tel" name="phone_number" class="form-control"
+                                               id="exampleInputEmail1"
+                                               placeholder="完善手机号" value="{{ user.phone_number }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputEmail">邮箱</label>
+                                        <input type="email" name="user_email" class="form-control"
+                                               id="exampleInputEmail1"
+                                               placeholder="完善邮箱" value="{{ user.user_email }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputID">身份证号</label>
+                                        <input type="text" name="id_no" class="form-control" id="exampleInputEmail1"
+                                               placeholder="完善身份证号" value="{{ user.id_no }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputEmail">银行名称</label>
+                                        {% if user.account_type %}
+                                            <input type="text" name="account_type" class="form-control"
+                                                   id="InputAccountType"
+                                                   placeholder="完善银行名称" value="{{ user.account_type }}">
+                                        {% else %}
+                                            <input type="text" name="account_type" class="form-control"
+                                                   id="InputAccountType"
+                                                   placeholder="完善银行名称">
+                                        {% endif %}
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputEmail">银行卡号</label>
+                                        {% if user.account_num %}
+                                            <input type="text" name="account_num" class="form-control"
+                                                   id="InputAccountNum"
+                                                   placeholder="完善银行卡号" value="{{ user.account_num }}">
+                                        {% else %}
+                                            <input type="text" name="account_num" class="form-control"
+                                                   id="InputAccountType"
+                                                   placeholder="完善银行卡号">
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputPassword">密码</label>
+                                        <input type="password" name="password" class="form-control"
+                                               id="exampleInputPassword1"
+                                               placeholder="完善密码" value="{{ user.password }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputEnsurePassword">确认密码</label>
+                                        <input type="password" name="ensure_password" class="form-control"
+                                               id="exampleInputPassword1"
+                                               placeholder="完善密码" value="{{ user.password }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleInputFile">用户头像</label>
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                                <input type="file" name="photo_url" class="custom-file-input"
+                                                       id="exampleInputFile">
+                                                <label class="custom-file-label"
+                                                       for="exampleInputFile">选择图片</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <!-- /.card-body -->
+
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary">提交</button>
+                                </div>
+                            </form>
                         </div>
                         <!-- /.card -->
                     </div>
-                </div>
-                <!-- /.row -->
-            </div><!-- /.container-fluid -->
+                </div><!-- /.container-fluid -->
+            </div>
         </section>
         <!-- /.content -->
     </div>
-    <!-- /.content-wrapper -->
-{% endblock content %}
 
-{% block js %}
-    <script>
-        $(function () {
-
-            $('#table').DataTable({
-                "paging": true,
-                "lengthChange": false,
-                "searching": false,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-                "responsive": true,
-            });
-        });
-    </script>
-{% endblock js %}
+{% endblock %}

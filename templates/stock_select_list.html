@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block web_title %}
+    <title>筛选列表</title>
+{% endblock web_title %}
+
+{% block content %}
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>符合要求的股票列表</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">首页</a></li>
+                            <li class="breadcrumb-item active">筛选列表</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">筛选列表</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table id='table' class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>股票代码</th>
+                                        <th>股票名称</th>
+                                        <th>最新价</th>
+                                        <th>涨跌</th>
+                                        <th>涨跌幅</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for stock in good_stocks %}
+                                        <tr>
+                                            {% if stock.change > 0 %}
+                                                <td style="color: red"><a href="{% url 'stock_detail' %}?symbol={{ stock.symbol }}">{{ stock.symbol }}</a></td>
+                                                <td style="color: red">{{ stock.name }}</td>
+                                                <td style="color: red">{{ stock.close }}</td>
+                                                <td style="color: red">{{ stock.change }}</td>
+                                                <td style="color: red">{{ stock.pct }}%</td>
+                                            {% else %}
+                                                <td style="color: green"><a href="{% url 'stock_detail' %}?symbol={{ stock.symbol }}">{{ stock.symbol }}</a></td>
+                                                <td style="color: green">{{ stock.name }}</td>
+                                                <td style="color: green">{{ stock.close }}</td>
+                                                <td style="color: green">{{ stock.change }}</td>
+                                                <td style="color: green">{{ stock.pct }}%</td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+{#                            <div class="card-footer clearfix">#}
+{#                                <ul class="pagination pagination-sm m-0 float-right">#}
+{#                                    {% if c_page.has_previous %}#}
+{#                                        <li class="page-item"><a class="page-link" href="{% url 'stock_all' %}?page={{ c_page.previous_page_number }}">上一页</a></li>#}
+{#                                    {% else %}#}
+{#                                        <li class="page-item page-link">上一页</li>#}
+{#                                    {% endif %}#}
+{#                                    {% for p_num in paginator.page_range %}#}
+{#                                        {% if p_num == c_page.number %}#}
+{#                                            <li class="page-item page-link" style="color: #fffffc;background-color: #0c84ff">{{ p_num }}</li>#}
+{#                                        {% elif p_num >= c_page.number|add:-3 and p_num <= c_page.number|add:3 %}#}
+{#                                            <li class="page-item"><a class="page-link" href="{% url 'stock_all' %}?page={{ p_num }}">{{ p_num }}</a></li>#}
+{#                                        {% endif %}#}
+{#                                    {% endfor %}#}
+{#                                    {% if c_page.has_next %}#}
+{#                                        <li class="page-item"><a class="page-link" href="{% url 'stock_all' %}?page={{ c_page.next_page_number }}">下一页</a></li>#}
+{#                                    {% else %}#}
+{#                                        <li class="page-item page-link">下一页</li>#}
+{#                                    {% endif %}#}
+{#                                </ul>#}
+{#                            </div>#}
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+{% endblock content %}
+
+{% block js %}
+    <script>
+        $("#table").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    </script>
+{% endblock js %}

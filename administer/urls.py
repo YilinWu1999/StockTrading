@@ -7,5 +7,5 @@ urlpatterns = [
     path('user/', views.admin_user, name='admin_user'),
     path('news/', views.admin_news, name='admin_news'),
     path('stock/', views.admin_stock, name='admin_stock'),
-
+    path('login/', views.admin_login, name='admin_login'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # 加入这个才能显示media文件

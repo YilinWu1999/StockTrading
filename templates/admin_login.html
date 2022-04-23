@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>登陆</title>
+    <title>管理员登陆</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -20,14 +20,13 @@
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <a href="{% url 'index' %}">股票交易系统</a>
+        <a href="{% url 'index' %}">股票交易系统管理员登录</a>
     </div>
     <!-- /.login-logo -->
     <div class="card">
         <div class="card-body login-card-body">
-            <p class="login-box-msg">登陆开始你的财富之旅</p>
 
-            <form action="{% url 'login' %}" method="post">
+            <form action="{% url 'admin_login' %}" method="post">
                 {% csrf_token %}
                 <div class="input-group mb-3">
                     <input type="tel" name="phone_number" class="form-control" placeholder="手机号">
@@ -61,13 +60,6 @@
                     <!-- /.col -->
                 </div>
             </form>
-
-            <p class="mb-1">
-                <a href="{% url 'admin_login' %}">管理员登陆</a>
-            </p>
-            <p class="mb-0">
-                <a href="{% url 'register' %}" class="text-center">注册</a>
-            </p>
         </div>
         <!-- /.login-card-body -->
     </div>

@@ -50,3 +50,7 @@ def news_get(num):
         news['time'] = news_data.news_time
         newses.append(news)
     return newses
+
+def news_all(request):
+    newses = news_get(20)
+    return render(request,'news_all.html',locals())
